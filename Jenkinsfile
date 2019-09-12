@@ -5,6 +5,10 @@ pipeline {
             steps {
                 echo 'Hello world!' 
             }
+    	stage('Unit Test') { 
+     		 steps {
+        		sh 'mvn clean test'
+      		}
         }
     }
 }
