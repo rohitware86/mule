@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="406a0ca0-7d69-4c99-be39-d8e58fd2d0fa" >
+		<file:connection workingDir="/Users/rohitware/Mulesoft/test/in" />
+	</file:config>
+	<flow name="fileexampleFlow" doc:id="51ddd3c1-1c1b-499d-889b-48eebd6d90cb" >
+		<file:listener doc:id="aa8b4987-25db-4a2a-a480-f3f32f7086fa" config-ref="File_Config" directory="/Users/rohitware/Mulesoft/test/in" moveToDirectory="/Users/rohitware/Mulesoft/test/out" renameTo="#[attributes.fileName as String ++ '.' ++ (now() as String {format: &quot;yyyy_MM_dd_HH_mm_ss_SSS&quot;}) ++ '.success']" outputMimeType="application/xml" recursive="false">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+			<file:matcher filenamePattern="*.xml" />
+		</file:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="b39f4951-6991-4e15-af2b-81028d14387b" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="4de32b20-8399-45b9-a187-5ac96498b6b2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="48b8bc3c-9482-4b3f-bcb2-34fbe5ab1487" config-ref="File_Config" path="/Users/rohitware/Mulesoft/test/out/test123.json" mode="APPEND" />
+		<logger level="INFO" doc:name="Logger" doc:id="19157f05-6291-4c25-9d54-403aa938c33a" message="#[payload]"/>
+	</flow>
+</mule>
