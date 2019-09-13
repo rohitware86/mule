@@ -1,6 +1,5 @@
 pipeline {
     agent any
-    withMaven(maven: 'maven-3')
     stages {
         stage('Stage 1') {
             steps {
